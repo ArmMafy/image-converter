@@ -15,11 +15,10 @@ var (
 )
 
 func spawnWorkers(n int, wg *sync.WaitGroup, ch chan *converter.Converter, destinationDirectory string) {
+	wg.Add(n)
 	for i := 1; i <= n; i++ {
-		wg.Add(1)
 		go converter.Worker(wg, ch, destinationDirectory)
-		fmt.Println("Workers:")
-		fmt.Println(i)
+		fmt.Println("Workers:", i)
 	}
 	fmt.Println("Workers spawned")
 }
