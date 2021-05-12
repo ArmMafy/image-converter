@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-func imageDecoder(file *os.File, imagePath Converter) (image.Image, error) {
+func imageDecoder(file *os.File, imagePath *Converter) (image.Image, error) {
 	var err error
 	var img image.Image
 	switch imagePath.Extension {
@@ -30,7 +30,7 @@ func imageDecoder(file *os.File, imagePath Converter) (image.Image, error) {
 	return img, err
 }
 
-func imageEncoder(newImage *os.File, imgSet *image.RGBA, imagePath Converter) error {
+func imageEncoder(newImage *os.File, imgSet *image.RGBA, imagePath *Converter) error {
 	switch imagePath.Extension {
 	case ".jpeg":
 		jpeg.Encode(newImage, imgSet, nil)
@@ -42,7 +42,7 @@ func imageEncoder(newImage *os.File, imgSet *image.RGBA, imagePath Converter) er
 	return nil
 }
 
-func Worker(wg *sync.WaitGroup, ch chan Converter, destinationDirectory string) {
+func Worker(wg *sync.WaitGroup, ch chan *Converter, destinationDirectory string) {
 	defer wg.Done()
 
 	for {
