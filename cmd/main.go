@@ -14,7 +14,7 @@ var (
 	wg                   sync.WaitGroup
 )
 
-func spawnWorkers(n int, wg *sync.WaitGroup, ch chan converter.Converter, destinationDirectory string) {
+func spawnWorkers(n int, wg *sync.WaitGroup, ch chan *converter.Converter, destinationDirectory string) {
 	for i := 1; i <= n; i++ {
 		wg.Add(1)
 		go converter.Worker(wg, ch, destinationDirectory)
@@ -32,7 +32,7 @@ func main() {
 	fmt.Println(maxWorkers)
 	fmt.Println("Starting")
 	// Channel for sharing readed files among workers
-	imagePool := make(chan converter.Converter, maxWorkers)
+	imagePool := make(chan *converter.Converter, maxWorkers)
 
 	// Creates workers that takes files from imagePool channel, converts their colors to grey, encodes new converted versions of images to destination directory
 	spawnWorkers(maxWorkers, &wg, imagePool, destinationDirectory)
