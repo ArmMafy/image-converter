@@ -50,13 +50,14 @@ func Worker(wg *sync.WaitGroup, ch chan *Converter, destinationDirectory string)
 		if !ok {
 			break
 		}
+
 		imagePath.DestinationPath = destinationDirectory
-		//Removed Join
 		file, err := os.Open(imagePath.SourcePath)
 		if err != nil {
 			fmt.Println(err)
 		}
 		defer file.Close()
+
 		img, err := imageDecoder(file, imagePath)
 		if err != nil {
 			fmt.Println(err)

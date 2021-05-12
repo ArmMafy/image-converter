@@ -11,6 +11,13 @@ func GetImages(directoryPath string, imagePool chan *Converter) error {
 	directory, _ := os.Open(directoryPath)
 	defer directory.Close()
 	err := filepath.Walk(directoryPath, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			if dirName := info.Name(); dirName == filepath.Base(directoryPath) {
+				return nil
+			}
+			fmt.Println("Directory detected")
+			return filepath.SkipDir
+		}
 		switch filepath.Ext(path) {
 		case ".jpeg":
 			jpegConverter := NewConverter(info.Name())
