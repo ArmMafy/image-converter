@@ -8,31 +8,36 @@ import (
 )
 
 var (
-	maxWorkers           int = 5
+	maxWorkers           int
 	sourceDirectory      string
 	destinationDirectory string
 	wg                   sync.WaitGroup
 )
 
-//third parametr chan Convertible
 func spawnWorkers(n int, wg *sync.WaitGroup, ch chan converter.Converter, destinationDirectory string) {
 	for i := 1; i <= n; i++ {
 		wg.Add(1)
 		go converter.Worker(wg, ch, destinationDirectory)
+		fmt.Println("Workers:")
+		fmt.Println(i)
 	}
+	fmt.Println("Workers spawned")
 }
 
 func main() {
-	flag.StringVar(&sourceDirectory, "Source Directory", sourceDirectory, "s")
-	flag.StringVar(&destinationDirectory, "Target Directory", destinationDirectory, "d")
-	flag.IntVar(&maxWorkers, "Number of workers spawned", maxWorkers, "n")
+	flag.StringVar(&sourceDirectory, "s", sourceDirectory, "Source Directory")
+	flag.StringVar(&destinationDirectory, "d", destinationDirectory, "Destination Directory")
+	flag.IntVar(&maxWorkers, "n", maxWorkers, "Quantity of Workers")
 	flag.Parse()
-
+	fmt.Println(maxWorkers)
+	fmt.Println("Starting")
+	// Channel for sharing readed files among workers
 	imagePool := make(chan converter.Converter, maxWorkers)
-	//We will take path of the  source directory and read all files with walkpath. We'll ignore directories
+
+	// Creates workers that takes files from imagePool channel, converts their colors to grey, encodes new converted versions of images to destination directory
 	spawnWorkers(maxWorkers, &wg, imagePool, destinationDirectory)
+	// Read files from directory, ignores subdirectories and any other file that doesn't have jpeg or png extension, sends images to channel
 	converter.GetImages(sourceDirectory, imagePool)
-	//WAitGroup
 	wg.Wait()
 	fmt.Println("Done")
 }

@@ -1,26 +1,26 @@
 package types
 
-import (
-	"education/images/pkg/converter"
-	"fmt"
-)
+// import (
+// 	"education/images/pkg/converter"
+// 	"fmt"
+// )
 
-type JpegImage struct {
-	Path string
-	source
-	destination
-	name
-}
+// type JpegImage struct {
+// 	Path string
+// 	source
+// 	destination
+// 	name
+// }
 
-func NewJpegImage(path string) (converter.Convertible, error) {
-	return &JpegImage{Path: path}, nil
-}
+// func NewJpegImage(path string) (converter.Convertible, error) {
+// 	return &JpegImage{Path: path}, nil
+// }
 
-func check(err error) {
-	if err != nil {
-		fmt.Println(err)
-	}
-}
+// func check(err error) {
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// }
 
 // func (imagePath *JpegImage) ConvertToGrey() {
 // file, err := os.Open(imagePath.Path)

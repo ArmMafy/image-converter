@@ -1,29 +1,34 @@
 package converter
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
 
 func GetImages(directoryPath string, imagePool chan Converter) error {
 
+	directory, _ := os.Open(directoryPath)
+	defer directory.Close()
 	err := filepath.Walk(directoryPath, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return nil
-		}
-		fileExtension := filepath.Ext(path)
-		switch fileExtension {
+		switch filepath.Ext(path) {
 		case ".jpeg":
-			jpegConverter := NewConverter(path)
+			jpegConverter := NewConverter(info.Name())
 			jpegConverter.Extension = ".jpeg"
+			jpegConverter.SourcePath = path
+			imagePool <- *jpegConverter
+		case ".jpg":
+			jpegConverter := NewConverter(info.Name())
+			jpegConverter.Extension = ".jpg"
 			imagePool <- *jpegConverter
 		case ".png":
-			pngConverter := NewConverter(path)
+			pngConverter := NewConverter(info.Name())
 			pngConverter.Extension = ".png"
 			imagePool <- *pngConverter
 		default:
 			return nil
 		}
+		fmt.Println(path)
 		return nil
 	})
 	close(imagePool)
