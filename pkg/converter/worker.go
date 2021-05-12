@@ -14,10 +14,15 @@ import (
 func imageDecoder(file *os.File, imagePath Converter) (image.Image, error) {
 	var err error
 	var img image.Image
-	if imagePath.Extension == ".jpeg" {
+	switch imagePath.Extension {
+	case ".jpeg":
 		img, err = jpeg.Decode(file)
-	} else {
+	case ".jpg":
+		img, err = jpeg.Decode(file)
+	case ".png":
 		img, err = png.Decode(file)
+	default:
+		break
 	}
 	if err != nil {
 		fmt.Println(err)
@@ -26,9 +31,12 @@ func imageDecoder(file *os.File, imagePath Converter) (image.Image, error) {
 }
 
 func imageEncoder(newImage *os.File, imgSet *image.RGBA, imagePath Converter) error {
-	if imagePath.Extension == ".jpeg" {
+	switch imagePath.Extension {
+	case ".jpeg":
 		jpeg.Encode(newImage, imgSet, nil)
-	} else {
+	case ".jpg":
+		jpeg.Encode(newImage, imgSet, nil)
+	case ".png":
 		png.Encode(newImage, imgSet)
 	}
 	return nil
@@ -43,7 +51,8 @@ func Worker(wg *sync.WaitGroup, ch chan Converter, destinationDirectory string) 
 			break
 		}
 		imagePath.DestinationPath = destinationDirectory
-		file, err := os.Open(path.Join(imagePath.SourcePath, imagePath.Name))
+		//Removed Join
+		file, err := os.Open(imagePath.SourcePath)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -54,10 +63,11 @@ func Worker(wg *sync.WaitGroup, ch chan Converter, destinationDirectory string) 
 		}
 		b := img.Bounds()
 		imgSet := image.NewRGBA(b)
-
-		for y := 0; y < b.Max.Y; y++ {
+		for z := 0; z < b.Max.Y; z++ {
 			for x := 0; x < b.Max.X; x++ {
-				imgSet.Set(x, y, color.GrayModel.Convert(img.At(x, y)))
+				oldPixel := img.At(x, z)
+				pixel := color.GrayModel.Convert(oldPixel)
+				imgSet.Set(x, z, pixel)
 			}
 		}
 
