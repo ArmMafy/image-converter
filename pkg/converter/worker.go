@@ -11,24 +11,24 @@ import (
 	"sync"
 )
 
-func imageDecoder(file *os.File, imagePath *Converter) (image.Image, error) {
-	var err error
-	var img image.Image
-	switch imagePath.Extension {
-	case ".jpeg":
-		img, err = jpeg.Decode(file)
-	case ".jpg":
-		img, err = jpeg.Decode(file)
-	case ".png":
-		img, err = png.Decode(file)
-	default:
-		break
-	}
-	if err != nil {
-		fmt.Println(err)
-	}
-	return img, err
-}
+// func imageDecoder(file *os.File, imagePath *Converter) (image.Image, error) {
+// 	var err error
+// 	var img image.Image
+// 	switch imagePath.Extension {
+// 	case ".jpeg":
+// 		img, err = jpeg.Decode(file)
+// 	case ".jpg":
+// 		img, err = jpeg.Decode(file)
+// 	case ".png":
+// 		img, err = png.Decode(file)
+// 	default:
+// 		break
+// 	}
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	return img, err
+// }
 
 func imageEncoder(newImage *os.File, imgSet *image.RGBA, imagePath *Converter) error {
 	switch imagePath.Extension {
@@ -58,10 +58,11 @@ func Worker(wg *sync.WaitGroup, ch chan *Converter, destinationDirectory string)
 		}
 		defer file.Close()
 
-		img, err := imageDecoder(file, imagePath)
+		img, _, err := image.Decode(file)
 		if err != nil {
 			fmt.Println(err)
 		}
+
 		b := img.Bounds()
 		imgSet := image.NewRGBA(b)
 		for z := 0; z < b.Max.Y; z++ {
