@@ -1,10 +1,5 @@
 package converter
 
-// type Convertible interface {
-// 	GetImages()
-// 	ConvertToGrey()
-// }
-
 type Converter struct {
 	Name            string
 	Extension       string

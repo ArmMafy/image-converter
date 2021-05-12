@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	maxWorkers           int
+	maxWorkers           int = 2
 	sourceDirectory      string
 	destinationDirectory string
 	wg                   sync.WaitGroup
