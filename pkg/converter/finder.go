@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func GetImages(directoryPath string, imagePool chan Converter) error {
+func GetImages(directoryPath string, imagePool chan *Converter) error {
 
 	directory, _ := os.Open(directoryPath)
 	defer directory.Close()
@@ -16,15 +16,17 @@ func GetImages(directoryPath string, imagePool chan Converter) error {
 			jpegConverter := NewConverter(info.Name())
 			jpegConverter.Extension = ".jpeg"
 			jpegConverter.SourcePath = path
-			imagePool <- *jpegConverter
+			imagePool <- jpegConverter
 		case ".jpg":
 			jpegConverter := NewConverter(info.Name())
+			jpegConverter.SourcePath = path
 			jpegConverter.Extension = ".jpg"
-			imagePool <- *jpegConverter
+			imagePool <- jpegConverter
 		case ".png":
 			pngConverter := NewConverter(info.Name())
+			pngConverter.SourcePath = path
 			pngConverter.Extension = ".png"
-			imagePool <- *pngConverter
+			imagePool <- pngConverter
 		default:
 			return nil
 		}
